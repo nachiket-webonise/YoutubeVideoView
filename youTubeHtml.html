@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+        <div id="player">
+        </div>
+        
+        <script id="mainScript">
+                // 2. This code loads the IFrame Player API code asynchronously.
+                // get video id
+            getVideoId();
+            
+            var tag = document.createElement('script');
+//            tag.src = "http://www.youtube.com/player_api";
+            tag.src = "http://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                // 3. This function creates an <iframe> (and YouTube player)
+                //    after the API code downloads.
+            var player;
+            var video_Id;
+                //setVideoId('HAn9QerojYU');
+            
+            function getVideoId(){
+                window.location = "video:getId";
+            }
+            
+            function setVideoId(str){
+                video_Id = str;
+                window.location="video:didSetId";
+            }
+            
+            
+//            playerVars : {'controls:2'},
+           /*
+            function onYouTubePlayerAPIReady() {
+//                window.location="video:onYouTubePlayerAPIReady";
+                player = new YT.Player('ytplayer', {
+                                       height: '135',
+                                       width: '295',
+                                       videoId: video_Id,
+                                       events: {
+                                       'onReady': onPlayerReady,
+                                       'onStateChange': onPlayerStateChange,
+                                       'onError':onPlayerError
+                                       }
+                                       });
+            }
+            */
+            
+            
+            function onYouTubeIframeAPIReady() {
+                    //                window.location="video:onYouTubePlayerAPIReady";
+                player = new YT.Player('player', {
+                                       height: '135',
+                                       width: '295',
+                                       videoId: video_Id,
+                                       events: {
+                                       'onReady': onPlayerReady,
+                                       'onStateChange': onPlayerStateChange,
+                                       'onError':onPlayerError
+                                       }
+                                       });
+            }
+            
+                // 4. The API will call this function when the video player is ready.
+            function onPlayerReady(event) {
+                
+                player.setPlaybackQuality('suggestedQuality:default');
+                event.target.playVideo();
+            }
+            
+                // 5. The API calls this function when the player's state changes.
+                //    The function indicates that when playing a video (state=1),
+                //    the player should play for six seconds and then stop.
+            var done = false;
+            function onPlayerStateChange(event) {
+                if(event.data == YT.PlayerState.ENDED){
+//                    player.stopVideo();
+//                    player.clearVideo();
+                    window.location = "video:ended";
+                }else if(event.data == YT.PlayerState.BUFFERING){
+                    window.location = "video:buffering";
+                }else if(event.data == YT.PlayerState.CUED){
+                    window.location = "video:cued";
+                } else if(event.data == YT.PlayerState.PLAYING){
+                    window.location = "video:playing";
+                } else if(event.data == -1) {
+                        // Unstarted state
+                        // window.location = "video:unstarted";
+                }
+                /*else if(event.data == YT.PlayerState.PAUSED){
+                 window.location = "video:paused";
+                 } */
+            }
+            
+            function onPlayerError(event){
+                var errorCode = event.data;
+                window.location = "video:error";
+            }
+            
+            function stopVideo() {
+                player.stopVideo();
+            }
+            </script>
+    </body>
+</html>
